@@ -46,6 +46,49 @@ def load_model():
 pipe = llm.load_model()
 
 # --- Streamlit アプリケーション ---
+st.markdown("""
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Arial', sans-serif;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 10px 20px;
+            border: none;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
+        .stTextInput>div>input {
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .stTextArea>div>textarea {
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .sidebar .sidebar-content {
+            background-color: #24292f;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar .sidebar-content a {
+            color: #61dafb;
+        }
+        .stRadio>div>label {
+            font-size: 18px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("🤖 Gemma 2 Chatbot with Feedback")
 st.write("Gemmaモデルを使用したチャットボットです。回答に対してフィードバックを行えます。")
 st.markdown("---")
