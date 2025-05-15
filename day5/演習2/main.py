@@ -10,6 +10,7 @@ from sklearn.impute import SimpleImputer
 import pickle
 import time
 import great_expectations as gx
+import pytest
 
 
 class DataLoader:
@@ -247,6 +248,29 @@ def test_model_performance():
     assert (
         metrics["inference_time"] < 1.0
     ), f"推論時間が長すぎます: {metrics['inference_time']}秒"
+
+
+def test_compare_with_baseline_model():
+    data = DataLoader.load_titanic_data()
+    X, y = DataLoader.preprocess_titanic_data(data)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+    # 現在のモデルを学習
+    current_model = ModelTester.train_model(X_train, y_train)
+    current_metrics = ModelTester.evaluate_model(current_model, X_test, y_test)
+
+    # 過去モデル（保存済みモデル）をロード（なければテストスキップ）
+    import os
+
+    if not os.path.exists("models/titanic_model.pkl"):
+        pytest.skip("ベースラインモデルがまだ存在しません")
+
+    baseline_model = ModelTester.load_model("models/titanic_model.pkl")
+    baseline_metrics = ModelTester.evaluate_model(baseline_model, X_test, y_test)
+
+    # 精度の劣化がないかチェック（許容範囲を5%以内など）
+    diff = current_metrics["accuracy"] - baseline_metrics["accuracy"]
+    assert diff >= -0.05, f"新しいモデルが精度で劣化しています（差分: {diff:.4f}）"
 
 
 if __name__ == "__main__":
